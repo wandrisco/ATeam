@@ -11,6 +11,8 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import java.util.ArrayList;
+import java.util.Random;
 
 
 class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
@@ -18,10 +20,15 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public static final float WIDTH = 1000; //width of background
     public static final float HEIGHT = 1149; //height of background, was 201
     public static final int MOVESPEED = -1;
+    private long smokeStartTime;
+    private long missileStartTime;
     private MainThread mainThread;
     private Background background;
     private Player player;
     private Player board;
+    private ArrayList<Smokepuff> smoke;
+    private ArrayList<Missile> missiles;
+    private Random rand = new Random();
 
 
     public GamePanel(Game game) {
@@ -70,7 +77,11 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.helicopter), 65, 25, 3);
         board = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.board1), screenWidth/((int)WIDTH), screenHeight/((int)HEIGHT), 1);
         //BufferedImage bufferedImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.Type_INT_RGB);
-     //   background.setVector(-1); //starts the image -5 off the screem
+        //background.setVector(-1); //starts the image -5 off the screen
+        smoke = new ArrayList<Smokepuff>();
+        missiles = new ArrayList<Missile>();
+        smokeStartTime = System.nanoTime();
+        missileStartTime = System.nanoTime();
         mainThread.setRunning(true);
         mainThread.start();
 
@@ -92,16 +103,16 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             }
             else
             {
-                if(screenX > ((screenWidth/2))){
+                if(screenX > ((2*screenWidth/3))){
                     player.setRight(true); //right
                 }
-                if(screenX < ((screenWidth/2))){
+                if(screenX < ((screenWidth/3))){
                     player.setLeft(true); //left
                 }
-                if(screenY < ((screenHeight/2))) {
+                if(screenY < ((screenHeight/3))) {
                     player.setUp(true);
                 }
-                if(screenY > ((screenHeight/2))){
+                if(screenY > ((2*screenHeight/3))){
                     player.setDown(true); //down
                 }
             }
@@ -123,7 +134,60 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         if(player.getPlaying()) {
             background.update();
             player.update();
-            board.update();
+            //board.update();
+
+            //add missiles on timer
+            long missileElapsed = (System.nanoTime()-missileStartTime)/1000000;
+            if(missileElapsed >(2000 - player.getScore()/4)){
+
+                System.out.println("making missile");
+                //first missile always goes down the middle
+                if(missiles.size()==0)
+                {
+                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH + 10, (int)HEIGHT/2, 45, 15, player.getScore(), 13));
+                }
+                else
+                {
+
+                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),45,15, player.getScore(),13));
+                }
+
+                //reset timer
+                missileStartTime = System.nanoTime();
+            }
+            //loop through every missile and check collision and remove
+            for(int i = 0; i<missiles.size();i++)
+            {
+                //update missile
+                missiles.get(i).update();
+
+                if(collision(missiles.get(i),player))
+                {
+                    missiles.remove(i);
+                    player.setPlaying(false);
+                    break;
+                }
+                //remove missile if it is way off the screen
+                if(missiles.get(i).getX()<-100)
+                {
+                    missiles.remove(i);
+                    break;
+                }
+            }
+
+
+//------------------------------------------------------------------------------------------------
+            long elapsed = (System.nanoTime() - smokeStartTime)/1000000;
+            if(elapsed > 120){
+                smoke.add(new Smokepuff(player.getX(), player.getY()+10));
+                smokeStartTime = System.nanoTime();
+            }
+            for(int i = 0; i < smoke.size(); i++){
+                smoke.get(i).update();
+                if(smoke.get(i).getX()<-10){
+                    smoke.remove(i);
+                }
+            }
         }
     }
 
@@ -149,8 +213,19 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             canvas.scale(scaleFactorX, scaleFactorY);
             background.draw(canvas);
             player.draw(canvas);
+            for(Smokepuff sp: smoke){
+                sp.draw(canvas);
+            }
+
+            //draw missiles
+            for(Missile m: missiles)
+            {
+                m.draw(canvas);
+            }
+
             board.draw(canvas);
             canvas.restoreToCount(savedState);
+
 
         }
         int never = 0;
