@@ -148,8 +148,22 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 }
                 else
                 {
-
-                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),45,15, player.getScore(),13));
+                    int upper = 6, lower = 1;
+                    int r = (int) (Math.random() * (upper - lower)) + lower;
+                    if(r == 1){
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 100),45,15, player.getScore(),13));
+                    }else if(r == 2){
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 250),45,15, player.getScore(),13));
+                    }else if(r==3){
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10,(int)(GamePanel.HEIGHT - 400) ,45,15, player.getScore(),13));
+                    }else if(r==4){
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 550),45,15, player.getScore(),13));
+                    }else if(r==5){
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 700),45,15, player.getScore(),13));
+                    }else if(r==6){
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 850),45,15, player.getScore(),13));
+                    }
+                    //missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),45,15, player.getScore(),13));
                 }
 
                 //reset timer
