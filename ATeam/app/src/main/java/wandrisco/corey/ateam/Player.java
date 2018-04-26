@@ -9,7 +9,7 @@ public class Player extends GameObject{
     private int score;
     private double dya;
     private double dxa;
-    private boolean up;
+    private boolean up, down, left, right;
     private boolean playing;
     private Animation animation = new Animation();
     private long startTime;
@@ -19,6 +19,7 @@ public class Player extends GameObject{
         x = 100;
         y = (int) (GamePanel.HEIGHT / 2);
         dy = 0;
+        dx = 0;
         score = 0;
         height = h;
         width = w;
@@ -39,6 +40,12 @@ public class Player extends GameObject{
 
     public void setUp(boolean b){up = b;}
 
+    public void setLeft(boolean b){left = b;}
+
+    public void setRight(boolean b){right = b;}
+
+    public void setDown(boolean b){down = b;}
+
     public void update()
     {
         long elapsed = (System.nanoTime()-startTime)/1000000;
@@ -50,18 +57,29 @@ public class Player extends GameObject{
         animation.update();
 
         if(up){
-            dy = (int)(dya-=1.1);
-
+            dy = (int)(dya-=5);
         }
-        else{
-            dy = (int)(dya+=1.1);
+        if(down){
+            dy = (int)(dya+=5);
+        }
+        if(left){
+            dx = (int)(dxa-=5);
+        }
+        if(right){
+            dx = (int)(dxa+=5);
         }
 
         if(dy>14)dy = 14;
         if(dy<-14)dy = -14;
+        if(dx>14)dx = 14;
+        if(dx<-14)dx = -14;
 
         y += dy*2;
+        x += dx*2;
         dy = 0;
+        dx = 0;
+        dya = 0;
+        dxa = 0;
     }
 
     public void draw(Canvas canvas)
