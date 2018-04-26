@@ -34,6 +34,12 @@ public abstract class GameObject {
     {
         return width;
     }
+    public void setHeight(int height){
+        this.height = height;
+    }
+    public void setWidth(int width){
+        this.width = width;
+    }
     public Rect getRectangle()
     {
         return new Rect(x, y, x+width, y+height);

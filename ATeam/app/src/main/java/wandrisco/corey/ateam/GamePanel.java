@@ -21,14 +21,18 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public static final float HEIGHT = 1149; //height of background, was 201
     public static final int MOVESPEED = -1;
     private long smokeStartTime;
-    private long missileStartTime;
+    private long missileStartTime, gameOverTime;
     private MainThread mainThread;
     private Background background;
     private Player player;
     private Player board;
     private ArrayList<Smokepuff> smoke;
     private ArrayList<Missile> missiles;
+    private GameObject girder1;
     private Random rand = new Random();
+    private boolean movingPlayer = false, gameOver = false;
+    int lives = 3;
+
 
 
     public GamePanel(Game game) {
@@ -43,6 +47,16 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //make focusable so can handle events
         setFocusable(true);
     }
+
+    public void reset() {
+        player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.helicopter), 65, 25, 3);
+        player.update();
+        movingPlayer = false;
+        player.setPlaying(false);
+
+
+    }
+
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -82,6 +96,11 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         missiles = new ArrayList<Missile>();
         smokeStartTime = System.nanoTime();
         missileStartTime = System.nanoTime();
+        girder1 = new GameObject;
+        girder1.setX(0);
+        girder1.setY(1116);
+        girder1.setHeight(30);
+        girder1.setWidth(500);
         mainThread.setRunning(true);
         mainThread.start();
 
@@ -97,6 +116,13 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;//metrics.heightPixels;
 
         if(event.getAction()==MotionEvent.ACTION_DOWN){
+            if(!gameOver && player.getRectangle().contains((int)event.getX(), (int)event.getY())) {
+                movingPlayer = true;
+            }
+            if(gameOver && System.currentTimeMillis() - gameOverTime >= 2000) {
+                reset();
+                gameOver = false;
+            }
             if(!player.getPlaying())
             {
                 player.setPlaying(true);
@@ -124,82 +150,90 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             player.setDown(false);
             player.setLeft(false);
             player.setRight(false);
+            movingPlayer = false;
             return true;
         }
+
+
 
         return super.onTouchEvent(event);
     }
 
     public void update() {
-        if(player.getPlaying()) {
-            background.update();
-            player.update();
-            //board.update();
-
-            //add missiles on timer
-            long missileElapsed = (System.nanoTime()-missileStartTime)/1000000;
-            if(missileElapsed >(2000 - player.getScore()/4)){
-
-                System.out.println("making missile");
-                //first missile always goes down the middle
-                if(missiles.size()==0)
-                {
-                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH + 10, (int)HEIGHT/2, 45, 15, player.getScore(), 13));
-                }
-                else
-                {
-                    int upper = 6, lower = 1;
-                    int r = (int) (Math.random() * (upper - lower)) + lower;
-                    if(r == 1){
-                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 100),45,15, player.getScore(),13));
-                    }else if(r == 2){
-                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 250),45,15, player.getScore(),13));
-                    }else if(r==3){
-                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10,(int)(GamePanel.HEIGHT - 400) ,45,15, player.getScore(),13));
-                    }else if(r==4){
-                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 550),45,15, player.getScore(),13));
-                    }else if(r==5){
-                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 700),45,15, player.getScore(),13));
-                    }else if(r==6){
-                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(GamePanel.HEIGHT - 850),45,15, player.getScore(),13));
-                    }
-                    //missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),45,15, player.getScore(),13));
-                }
-
-                //reset timer
-                missileStartTime = System.nanoTime();
-            }
-            //loop through every missile and check collision and remove
-            for(int i = 0; i<missiles.size();i++)
-            {
-                //update missile
-                missiles.get(i).update();
-
-                if(collision(missiles.get(i),player))
-                {
-                    missiles.remove(i);
+        if(gameOver == false) {
+            if (player.getPlaying()) {
+                background.update();
+                player.update();
+                if(collision(girder1, player)){
                     player.setPlaying(false);
-                    break;
+                    lives--;
                 }
-                //remove missile if it is way off the screen
-                if(missiles.get(i).getX()<-100)
-                {
-                    missiles.remove(i);
-                    break;
+
+                //board.update();
+
+                //add missiles on timer
+                long missileElapsed = (System.nanoTime() - missileStartTime) / 1000000;
+                if (missileElapsed > (2000 - player.getScore() / 4)) {
+
+                    System.out.println("making missile");
+                    //first missile always goes down the middle
+                    if (missiles.size() == 0) {
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile), (int) WIDTH + 10, (int) HEIGHT / 2, 45, 15, player.getScore(), 13));
+                    } else {
+                        int upper = 6, lower = 1;
+                        int r = (int) (Math.random() * (upper - lower)) + lower;
+                        if (r == 1) {
+                            missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile), (int) WIDTH + 10, (int) (GamePanel.HEIGHT - 100), 45, 15, player.getScore(), 13));
+                        } else if (r == 2) {
+                            missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile), (int) WIDTH + 10, (int) (GamePanel.HEIGHT - 250), 45, 15, player.getScore(), 13));
+                        } else if (r == 3) {
+                            missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile), (int) WIDTH + 10, (int) (GamePanel.HEIGHT - 400), 45, 15, player.getScore(), 13));
+                        } else if (r == 4) {
+                            missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile), (int) WIDTH + 10, (int) (GamePanel.HEIGHT - 550), 45, 15, player.getScore(), 13));
+                        } else if (r == 5) {
+                            missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile), (int) WIDTH + 10, (int) (GamePanel.HEIGHT - 700), 45, 15, player.getScore(), 13));
+                        } else if (r == 6) {
+                            missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), R.drawable.missile), (int) WIDTH + 10, (int) (GamePanel.HEIGHT - 850), 45, 15, player.getScore(), 13));
+                        }
+                        //missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.missile),(int)WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),45,15, player.getScore(),13));
+                    }
+
+                    //reset timer
+                    missileStartTime = System.nanoTime();
                 }
-            }
+                //loop through every missile and check collision and remove
+                for (int i = 0; i < missiles.size(); i++) {
+                    //update missile
+                    missiles.get(i).update();
+
+                    if (collision(missiles.get(i), player)) {
+                        missiles.remove(i);
+                        player.setPlaying(false);
+                        lives--;
+                        if(lives < 1) {
+                            gameOver = true;
+                        }
+                        break;
+                    }
+                    //remove missile if it is way off the screen
+                    if (missiles.get(i).getX() < -100) {
+                        missiles.remove(i);
+                        break;
+                    }
+                }
 
 
 //------------------------------------------------------------------------------------------------
-            long elapsed = (System.nanoTime() - smokeStartTime)/1000000;
-            if(elapsed > 120){
-                smoke.add(new Smokepuff(player.getX(), player.getY()+10));
-                smokeStartTime = System.nanoTime();
-            }
-            for(int i = 0; i < smoke.size(); i++){
-                smoke.get(i).update();
-                if(smoke.get(i).getX()<-10){
-                    smoke.remove(i);
+                long elapsed = (System.nanoTime() - smokeStartTime) / 1000000;
+                if (elapsed > 120) {
+                    smoke.add(new Smokepuff(player.getX(), player.getY() + 10));
+                    smokeStartTime = System.nanoTime();
+                }
+                for (int i = 0; i < smoke.size(); i++) {
+                    smoke.get(i).update();
+                    if (smoke.get(i).getX() < -10) {
+                        smoke.remove(i);
+                    }
                 }
             }
         }
