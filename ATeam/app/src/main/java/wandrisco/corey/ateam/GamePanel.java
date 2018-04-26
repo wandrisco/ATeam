@@ -28,7 +28,7 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Player board;
     private ArrayList<Smokepuff> smoke;
     private ArrayList<Missile> missiles;
-    private GameObject girder1;
+    private GameObject girder1, girder2, girder3, girder4, girder5, girder6, girder7, girder8, girder9, girder10, girder11, girder12, girder13, girder14, girder15, girder16, girder17, girder18, girder19, girder20, girder21, girder22, girder23, girder24, girder25, girder26, girder27, girder28;
     private Random rand = new Random();
     private boolean movingPlayer = false, gameOver = false;
     int lives = 3;
@@ -96,11 +96,155 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         missiles = new ArrayList<Missile>();
         smokeStartTime = System.nanoTime();
         missileStartTime = System.nanoTime();
-        girder1 = new GameObject;
+        //--------------------------
+        girder1 = new GameObject();
         girder1.setX(0);
         girder1.setY(1116);
         girder1.setHeight(30);
         girder1.setWidth(500);
+        girder2 = new GameObject();
+        girder2.setX(500);
+        girder2.setY(1100);
+        girder2.setHeight(45);
+        girder2.setWidth(220);
+        girder3 = new GameObject();
+        girder3.setX(716);
+        girder3.setY(1095);
+        girder3.setHeight(42);
+        girder3.setWidth(216);
+        girder4 = new GameObject();
+        girder4.setX(930);
+        girder4.setY(1085);
+        girder4.setHeight(37);
+        girder4.setWidth(70);
+        girder5 = new GameObject();
+        girder5.setX(860);
+        girder5.setY(990);
+        girder5.setHeight(36);
+        girder5.setWidth(73);
+        girder6 = new GameObject();
+        girder6.setX(569);
+        girder6.setY(979);
+        girder6.setHeight(45);
+        girder6.setWidth(220);
+        girder7 = new GameObject();
+        girder7.setX(352);
+        girder7.setY(965);
+        girder7.setHeight(45);
+        girder7.setWidth(220);
+        girder8 = new GameObject();
+        girder8.setX(135);
+        girder8.setY(952);
+        girder8.setHeight(45);
+        girder8.setWidth(220);
+        girder9 = new GameObject();
+        girder9.setX(0);
+        girder9.setY(936);
+        girder9.setHeight(39);
+        girder9.setWidth(137);
+        girder10 = new GameObject();
+        girder10.setX(62);
+        girder10.setY(841);
+        girder10.setHeight(37);
+        girder10.setWidth(70);
+        girder11 = new GameObject();
+        girder11.setX(210);
+        girder11.setY(825);
+        girder11.setHeight(45);
+        girder11.setWidth(220);
+        girder12 = new GameObject();
+        girder12.setX(500);
+        girder12.setY(806);
+        girder12.setHeight(45);
+        girder12.setWidth(220);
+        girder13 = new GameObject();
+        girder13.setX(717);
+        girder13.setY(793);
+        girder13.setHeight(45);
+        girder13.setWidth(220);
+        girder14 = new GameObject();
+        girder14.setX(932);
+        girder14.setY(785);
+        girder14.setHeight(35);
+        girder14.setWidth(70);
+        girder15 = new GameObject();
+        girder15.setX(860);
+        girder15.setY(691);
+        girder15.setHeight(35);
+        girder15.setWidth(70);
+        girder16 = new GameObject();
+        girder16.setX(572);
+        girder16.setY(676);
+        girder16.setHeight(45);
+        girder16.setWidth(220);
+        girder17 = new GameObject();
+        girder17.setX(282);
+        girder17.setY(660);
+        girder17.setHeight(45);
+        girder17.setWidth(220);
+        girder18 = new GameObject();
+        girder18.setX(66);
+        girder18.setY(647);
+        girder18.setHeight(45);
+        girder18.setWidth(220);
+        girder19 = new GameObject();
+        girder19.setX(0);
+        girder19.setY(637);
+        girder19.setHeight(35);
+        girder19.setWidth(70);
+        girder20 = new GameObject();
+        girder20.setX(64);
+        girder20.setY(542);
+        girder20.setHeight(35);
+        girder20.setWidth(70);
+        girder21 = new GameObject();
+        girder21.setX(210);
+        girder21.setY(533);
+        girder21.setHeight(35);
+        girder21.setWidth(70);
+        girder22 = new GameObject();
+        girder22.setX(355);
+        girder22.setY(518);
+        girder22.setHeight(45);
+        girder22.setWidth(220);
+        girder23 = new GameObject();
+        girder23.setX(572);
+        girder23.setY(507);
+        girder23.setHeight(45);
+        girder23.setWidth(220);
+        girder24 = new GameObject();
+        girder24.setX(790);
+        girder24.setY(495);
+        girder24.setHeight(45);
+        girder24.setWidth(220);
+        girder25 = new GameObject();
+        girder25.setX(865);
+        girder25.setY(395);
+        girder25.setHeight(35);
+        girder25.setWidth(70);
+        girder26 = new GameObject();
+        girder26.setX(642);
+        girder26.setY(380);
+        girder26.setHeight(44);
+        girder26.setWidth(145);
+        girder27 = new GameObject();
+        girder27.setX(0);
+        girder27.setY(375);
+        girder27.setHeight(39);
+        girder27.setWidth(643);
+        girder28 = new GameObject();
+        girder28.setX(390);
+        girder28.setY(250);
+        girder28.setHeight(36);
+        girder28.setWidth(219);
+
+
+
+
+
+
+
+        //--------------------------
         mainThread.setRunning(true);
         mainThread.start();
 
@@ -164,7 +308,9 @@ class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             if (player.getPlaying()) {
                 background.update();
                 player.update();
-                if(collision(girder1, player)){
+                if(collision(girder1, player) || collision(girder2, player) || collision(girder3, player) || collision(girder4, player) || collision(girder5, player) || collision(girder6, player) || collision(girder7, player) || collision(girder8, player) || collision(girder9, player) || collision(girder10, player) || collision(girder11, player) || collision(girder12, player) || collision(girder13, player) || collision(girder14, player) || collision(girder15, player) || collision(girder16, player) || collision(girder17, player) || collision(girder18, player) || collision(girder19, player) || collision(girder20, player) || collision(girder21, player) || collision(girder22, player) || collision(girder23, player) || collision(girder24, player) || collision(girder25, player) || collision(girder26, player) || collision(girder27, player) || collision(girder28, player)){
+                    player.setY((int) (GamePanel.HEIGHT - 100));
+                    player.setX(100);
                     player.setPlaying(false);
                     lives--;
                 }

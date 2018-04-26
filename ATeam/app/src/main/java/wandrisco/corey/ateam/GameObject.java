@@ -2,7 +2,7 @@ package wandrisco.corey.ateam;
 
 import android.graphics.Rect;
 
-public abstract class GameObject {
+public class GameObject {
     protected int x;
     protected int y;
     protected int dy;
