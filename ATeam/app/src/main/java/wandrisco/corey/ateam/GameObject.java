@@ -2,7 +2,7 @@ package wandrisco.corey.ateam;
 
 import android.graphics.Rect;
 
-public abstract class GameObject {
+public class GameObject {
     protected int x;
     protected int y;
     protected int dy;
@@ -33,6 +33,12 @@ public abstract class GameObject {
     public int getWidth()
     {
         return width;
+    }
+    public void setHeight(int height){
+        this.height = height;
+    }
+    public void setWidth(int width){
+        this.width = width;
     }
     public Rect getRectangle()
     {
